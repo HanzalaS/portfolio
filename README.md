@@ -40,8 +40,8 @@ I'm a passionate Flutter developer with 4+ years of experience in cross-platform
 
 ## 📞 Contact
 - **Email**: hanzalasaeed47@gmail.com
-- **LinkedIn**: [linkedin.com/in/hanzalasaeed](https://linkedin.com/in/hanzalasaeed)
-- **GitHub**: [github.com/hanzalasaeed](https://github.com/hanzalasaeed)
+- **LinkedIn**: [linkedin.com/in/hanzala-saeed](https://www.linkedin.com/in/hanzala-saeed/)
+- **GitHub**: [github.com/HanzalaS](https://github.com/HanzalaS)
 
 ---
 *Built with passion for mobile development* ❤️
