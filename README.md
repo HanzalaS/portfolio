@@ -1,47 +1,46 @@
-# Hanzala Saeed - Portfolio Website
+# Hanzala Saeed – Portfolio Website
 
-A modern, responsive portfolio website showcasing my Flutter development expertise and professional journey.
+My personal portfolio site. It presents my work as a Flutter developer to recruiters and potential clients: projects with screenshots, skills, experience, a CV download and a contact form.
 
-## 🌐 Live Website
-**[Visit Portfolio](https://hanzalas.github.io/portfolio/)**
+**Live:** https://hanzalas.github.io/portfolio/
 
-## 👨‍💻 About
-I'm a passionate Flutter developer with 4+ years of experience in cross-platform mobile development. This portfolio showcases my projects, skills, and professional experience.
+## Features
+- Responsive layout for mobile, tablet and desktop
+- Dark/light theme toggle
+- Project galleries with Swiper.js carousels
+- Scroll animations (AOS)
+- Sections: About, Education, Skills, Projects, Testimonials, Blog, CV, Contact
+- Contact form that opens a pre-filled email
 
-## 🚀 Features
-- **Responsive Design**: Optimized for all devices
-- **Dark/Light Mode**: Toggle between themes
-- **Interactive Project Gallery**: Swiper-powered image carousels
-- **Modern UI/UX**: Built with Tailwind CSS
-- **Smooth Animations**: AOS (Animate On Scroll) effects
-- **Contact Form**: Direct email integration
-
-## 🛠️ Technologies Used
-- HTML5 & CSS3
+## Built with
+- HTML5, JavaScript (ES6+)
 - Tailwind CSS
-- JavaScript (ES6+)
-- Swiper.js
-- AOS (Animate On Scroll)
-- Font Awesome Icons
+- Swiper.js, AOS, Font Awesome
+- Hosted on GitHub Pages
 
-## 📱 Featured Projects
-- **Simco Employee App** - Real-time geolocation tracking
-- **Bayline (India)** - AI-powered shrimp hatchery app
-- **KalPal** - Nutrition tracking app (Co-founder)
-- **Sercus** - Fintech loyalty & rewards ecosystem
-- And more...
+## Run locally
+There is no build step yet. Serve the folder with any static server:
 
-## 🎯 Skills Highlighted
-- Flutter & Dart
-- Firebase & AWS
-- Payment Integration (Stripe, Tap Payments)
-- Clean Architecture & State Management
-- Mobile App Development (iOS & Android)
+```bash
+git clone https://github.com/HanzalaS/portfolio.git
+cd portfolio
+python3 -m http.server 8000
+```
 
-## 📞 Contact
-- **Email**: hanzalasaeed47@gmail.com
-- **LinkedIn**: [linkedin.com/in/hanzala-saeed](https://www.linkedin.com/in/hanzala-saeed/)
-- **GitHub**: [github.com/HanzalaS](https://github.com/HanzalaS)
+Then open http://localhost:8000.
 
----
-*Built with passion for mobile development* ❤️
+## Deployment
+GitHub Pages serves the site from the `main` branch.
+
+## Roadmap
+Planned work (move to Astro, Markdown blog, image optimization, accessibility, tests and CI) is in [ROADMAP.md](ROADMAP.md).
+
+## License
+The source code is licensed under the [MIT License](LICENSE).
+
+The images in `assets/` are not covered by that license. They are screenshots and logos of apps I built or worked on, and they belong to their respective owners.
+
+## Contact
+- Email: hanzalasaeed47@gmail.com
+- LinkedIn: [linkedin.com/in/hanzala-saeed](https://www.linkedin.com/in/hanzala-saeed/)
+- GitHub: [github.com/HanzalaS](https://github.com/HanzalaS)
