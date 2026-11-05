@@ -22,13 +22,16 @@ Hour estimates are rough.
 - [ ] Write the first two posts (Flutter payment integration; background location tracking)
 
 ## 4. Performance (~4h)
-- [ ] Convert screenshots to WebP/AVIF with responsive sizes (target: total image weight under 2 MB)
-- [ ] Lazy-load images below the fold and add width/height to prevent layout shift
+- [x] Resize and compress screenshots (12.5 MB of PNG down to 1.5 MB of JPEG)
+- [ ] Serve WebP/AVIF with responsive `srcset` sizes
+- [x] Lazy-load project screenshots below the fold
+- [ ] Add width/height to all images to prevent layout shift
 - [ ] Self-host fonts and icons, removing render-blocking CDN CSS
 - [ ] Reach a Lighthouse performance score of 95 or more on mobile
 
 ## 5. Accessibility and SEO (~4h)
-- [ ] Fix missing/empty `alt` text and check heading order and color contrast
+- [x] Give the image popup real `alt` text (it was empty)
+- [ ] Check heading order and color contrast
 - [ ] Keyboard navigation and visible focus states for the carousels and theme toggle
 - [ ] Respect `prefers-reduced-motion` for AOS animations
 - [ ] Meta description, Open Graph/Twitter cards, favicon set, `sitemap.xml`, JSON-LD `Person` schema
