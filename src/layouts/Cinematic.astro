@@ -21,7 +21,8 @@ const year = new Date().getFullYear();
 const home = film ? '' : base;
 // Absolute URLs for link previews (LinkedIn, WhatsApp, X).
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL(`${base}og.png`, Astro.site).href;
+// Bump the version when the image changes, so link previews (which cache by URL) refetch it.
+const ogImage = new URL(`${base}og.png?v=aurora`, Astro.site).href;
 ---
 
 <!doctype html>
