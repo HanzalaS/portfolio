@@ -5,7 +5,7 @@ import '@fontsource/instrument-serif/400-italic.css';
 import '../styles/cinematic.css';
 import interLatin from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
 import Socials from '../components/Socials.astro';
-import { site } from '../site';
+import { site, base } from '../site';
 
 interface Props {
   title?: string;
@@ -18,7 +18,7 @@ interface Props {
 const { title, description = site.description, film = false, noindex = false } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
 const year = new Date().getFullYear();
-const home = film ? '' : '/';
+const home = film ? '' : base;
 ---
 
 <!doctype html>
@@ -45,7 +45,7 @@ const home = film ? '' : '/';
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
   </head>
   <body>
@@ -85,7 +85,7 @@ const home = film ? '' : '/';
         <Socials class="rv" />
         <div class="base">
           <span>{site.name} · {site.role} · {site.place}, Germany</span>
-          <span><a href="/colophon/">No cookies, no tracking.</a></span>
+          <span><a href={`${base}colophon/`}>No cookies, no tracking.</a></span>
           <span>© {year}</span>
         </div>
       </div>

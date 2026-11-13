@@ -1,4 +1,7 @@
 // Facts used across the site. One place to change them.
+/** The site's base path ('/portfolio/'), always with a trailing slash. */
+export const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+
 export const site = {
   name: 'Hanzala Saeed',
   role: 'Full Stack AI Engineer',
