@@ -1137,36 +1137,98 @@ html:not(.has-js) .beliefs li em {
   height: 100%;
   border-radius: 24px;
   overflow: hidden;
-  isolation: isolate;
-  background: linear-gradient(170deg, var(--warm-2) 0%, var(--warm) 45%, var(--cool) 100%);
 }
 
-.card.cool .screen {
-  background: linear-gradient(170deg, var(--cool-2) 0%, var(--cool) 50%, var(--warm) 100%);
+/* line-drawn app screens, glowing in the card's light */
+.glyph {
+  --gc: 255, 157, 92;
+  color: var(--warm-2);
+  background: radial-gradient(120% 70% at 50% 38%, rgba(var(--gc), 0.16), #07080d 72%);
 }
 
-.screen img {
+.card.cool .glyph {
+  --gc: 124, 200, 255;
+  color: var(--cool-2);
+}
+
+.glyph svg {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top;
-  filter: grayscale(1) invert(1) contrast(1.25) brightness(1.05);
-  mix-blend-mode: multiply;
-  transition: filter 1s var(--ease);
 }
 
-.card:hover .screen img,
-.card.solve .screen img {
-  filter: grayscale(1) invert(1) contrast(1.35) brightness(1.2);
+.glyph .dim { fill: currentColor; opacity: 0.14; }
+.glyph .line { stroke: currentColor; stroke-width: 1.6; opacity: 0.85; filter: drop-shadow(0 0 4px rgba(var(--gc), 0.8)); }
+.glyph .soft { opacity: 0.45; filter: none; }
+.glyph .core { fill: currentColor; filter: drop-shadow(0 0 8px rgba(var(--gc), 1)); }
+
+/* KalPal: rings fill up, the week lights up */
+.glyph .trk { stroke: currentColor; stroke-width: 2; opacity: 0.12; }
+.glyph .arc {
+  stroke: currentColor;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: var(--o);
+  transform: rotate(-90deg);
+  transform-origin: 90px 160px;
+  transition: stroke-dashoffset 1.8s var(--ease);
+  filter: drop-shadow(0 0 6px rgba(var(--gc), 0.9));
+}
+.glyph .a1 { --o: 42; }
+.glyph .a2 { --o: 66; transition-delay: 0.08s; }
+.glyph .a3 { --o: 84; transition-delay: 0.16s; }
+.glyph .day { fill: currentColor; opacity: 0.18; transition: opacity 0.5s, filter 0.5s; }
+.glyph .day.on { opacity: 0.9; filter: drop-shadow(0 0 5px rgba(var(--gc), 1)); }
+.glyph .day:nth-child(4) { transition-delay: 0.1s; }
+.glyph .day:nth-child(5) { transition-delay: 0.2s; }
+.glyph .day:nth-child(6) { transition-delay: 0.3s; }
+.glyph .day:nth-child(7) { transition-delay: 0.4s; }
+
+/* Sercus: points stack up, the button fills */
+.glyph .coin { stroke: currentColor; stroke-width: 1.6; opacity: 0.35; transform-box: fill-box; transform-origin: center; transition: opacity 0.6s, transform 0.9s var(--ease); }
+.glyph .c2 { transition-delay: 0.1s; }
+.glyph .c3 { transition-delay: 0.2s; }
+.glyph .fill { fill: currentColor; opacity: 0; transition: opacity 0.9s var(--ease); }
+
+/* Bayline: larvae in the dish, a scan sweeping over them */
+.glyph .larvae line { stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; opacity: 0.5; transition: opacity 0.8s; }
+.glyph .scan { transform-origin: 90px 170px; animation: spin 6s linear infinite; }
+.glyph .sweep { fill: currentColor; opacity: 0.12; }
+
+/* Simco: the route draws to the pin */
+.glyph .grid { stroke: currentColor; stroke-width: 1; opacity: 0.08; }
+.glyph .route {
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 58;
+  transition: stroke-dashoffset 1.6s var(--ease);
+  filter: drop-shadow(0 0 5px rgba(var(--gc), 0.9));
+}
+.glyph .start { fill: currentColor; opacity: 0.6; }
+.glyph .pin { transform-box: fill-box; animation: bob 2.4s var(--ease) infinite; }
+.glyph .check { stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
-.screen::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(5, 6, 10, 0.55), transparent 40%);
-}
+/* on hover (or in view on touch) each drawing plays out */
+.card:hover .glyph .arc,
+.card.solve .glyph .arc { --o: 0; }
+.card:hover .glyph .day,
+.card.solve .glyph .day { opacity: 0.9; filter: drop-shadow(0 0 5px rgba(var(--gc), 1)); }
+.card:hover .glyph .coin,
+.card.solve .glyph .coin { opacity: 1; transform: translateY(-6px); }
+.card:hover .glyph .fill,
+.card.solve .glyph .fill { opacity: 0.18; }
+.card:hover .glyph .larvae line,
+.card.solve .glyph .larvae line { opacity: 0.95; }
+.card:hover .glyph .route,
+.card.solve .glyph .route { stroke-dashoffset: 0; }
 
 /* DeepMask: twelve lights in a ring, for a sovereign Europe */
 .ring-art {

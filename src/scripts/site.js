@@ -123,7 +123,7 @@ copyBtn?.addEventListener('click', () => {
 const header = $('#top');
 const film = $('#film');
 const caps = $$('.cap');
-const ticks = $$('.tick');
+const ticks = $$('.film-prog .tick');
 const capWin = [
   [-1, 0.28],
   [0.4, 0.6],

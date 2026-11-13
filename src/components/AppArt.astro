@@ -1,0 +1,120 @@
+---
+/**
+ * A glowing line drawing of each app, shown inside a phone outline.
+ * Decorative only: the card text says what the app is.
+ */
+interface Props {
+  kind: 'kalpal' | 'sercus' | 'bayline' | 'simco';
+}
+const { kind } = Astro.props;
+
+// Bayline: tiny larvae scattered in a sample dish (seeded, so it's the same every build).
+let seed = 7;
+const rnd = () => {
+  seed = (seed * 16807) % 2147483647;
+  return seed / 2147483647;
+};
+const larvae = Array.from({ length: 140 }, () => {
+  const a = rnd() * Math.PI * 2;
+  const r = Math.sqrt(rnd()) * 58;
+  const len = 2 + rnd() * 2.6;
+  const rot = rnd() * Math.PI;
+  const x = 90 + Math.cos(a) * r;
+  const y = 170 + Math.sin(a) * r;
+  return {
+    x1: (x - Math.cos(rot) * len).toFixed(1),
+    y1: (y - Math.sin(rot) * len).toFixed(1),
+    x2: (x + Math.cos(rot) * len).toFixed(1),
+    y2: (y + Math.sin(rot) * len).toFixed(1),
+  };
+});
+---
+
+<div class="phone" aria-hidden="true">
+  <div class:list={['screen', 'glyph', `g-${kind}`]}>
+    <svg viewBox="0 0 180 380" fill="none">
+      {/* status bar, the same on every phone */}
+      <rect class="dim" x="66" y="16" width="48" height="12" rx="6"></rect>
+
+      {
+        kind === 'kalpal' && (
+          <>
+            <circle class="trk" cx="90" cy="160" r="62"></circle>
+            <circle class="trk" cx="90" cy="160" r="46"></circle>
+            <circle class="trk" cx="90" cy="160" r="30"></circle>
+            <circle class="arc a1" cx="90" cy="160" r="62" pathLength="100"></circle>
+            <circle class="arc a2" cx="90" cy="160" r="46" pathLength="100"></circle>
+            <circle class="arc a3" cx="90" cy="160" r="30" pathLength="100"></circle>
+            <circle class="core" cx="90" cy="160" r="4"></circle>
+            <g class="week">
+              {Array.from({ length: 7 }, (_, i) => (
+                <circle class:list={['day', i < 3 && 'on']} cx={36 + i * 18} cy="268" r="4"></circle>
+              ))}
+            </g>
+            <rect class="dim" x="36" y="300" width="108" height="8" rx="4"></rect>
+            <rect class="dim" x="36" y="318" width="72" height="8" rx="4"></rect>
+          </>
+        )
+      }
+
+      {
+        kind === 'sercus' && (
+          <>
+            <rect class="line" x="24" y="64" width="132" height="82" rx="12"></rect>
+            <rect class="line soft" x="38" y="80" width="22" height="16" rx="3"></rect>
+            <path class="line soft" d="M38 124h52M100 124h20"></path>
+            <g class="coins">
+              <circle class="coin c1" cx="58" cy="206" r="16"></circle>
+              <circle class="coin c2" cx="90" cy="206" r="16"></circle>
+              <circle class="coin c3" cx="122" cy="206" r="16"></circle>
+            </g>
+            <path class="line soft" d="M52 206h12M84 206h12M116 206h12"></path>
+            <rect class="line" x="24" y="258" width="132" height="34" rx="17"></rect>
+            <rect class="fill" x="24" y="258" width="132" height="34" rx="17"></rect>
+            <rect class="dim" x="60" y="312" width="60" height="8" rx="4"></rect>
+          </>
+        )
+      }
+
+      {
+        kind === 'bayline' && (
+          <>
+            <circle class="line" cx="90" cy="170" r="66"></circle>
+            <g class="larvae">
+              {larvae.map((l) => (
+                <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}></line>
+              ))}
+            </g>
+            <g class="scan">
+              <path class="sweep" d="M90 170L90 104A66 66 0 0 1 147 137Z"></path>
+            </g>
+            <rect class="line soft" x="40" y="270" width="100" height="30" rx="15"></rect>
+            <rect class="dim" x="62" y="282" width="56" height="6" rx="3"></rect>
+            <rect class="dim" x="58" y="320" width="64" height="8" rx="4"></rect>
+          </>
+        )
+      }
+
+      {
+        kind === 'simco' && (
+          <>
+            <path class="grid" d="M20 70h140M20 110h140M20 150h140M20 190h140M20 230h140M50 50v200M90 50v200M130 50v200"></path>
+            <path class="route" d="M40 220C60 200 52 170 80 160S120 150 118 128 130 104 138 100" pathLength="100"></path>
+            <circle class="start" cx="40" cy="220" r="5"></circle>
+            <g class="pin">
+              <path class="line" d="M138 100s-16-15-16-29a16 16 0 0 1 32 0c0 14-16 29-16 29z"></path>
+              <circle class="core" cx="138" cy="71" r="4"></circle>
+            </g>
+            <g class="tasks">
+              <rect class="line soft" x="24" y="276" width="132" height="26" rx="8"></rect>
+              <path class="check" d="M34 289l5 5 9-10"></path>
+              <rect class="dim" x="56" y="286" width="70" height="6" rx="3"></rect>
+              <rect class="line soft" x="24" y="312" width="132" height="26" rx="8"></rect>
+              <rect class="dim" x="56" y="322" width="54" height="6" rx="3"></rect>
+            </g>
+          </>
+        )
+      }
+    </svg>
+  </div>
+</div>
