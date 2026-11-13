@@ -33,9 +33,23 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
   }
   if (!renderer || !renderer.getContext()) return false;
 
+  // The brand palette lives in CSS; the film reads it so colours stay in one place.
+  const css = getComputedStyle(document.documentElement);
+  const rgb = (name, fallback) => {
+    const m = css.getPropertyValue(name).match(/\d+(\.\d+)?/g);
+    return m && m.length >= 3 ? m.slice(0, 3).map(Number) : fallback;
+  };
+  const A = rgb('--a-rgb', [60, 240, 180]);
+  const A2 = rgb('--a2-rgb', [184, 255, 226]);
+  const B = rgb('--b-rgb', [157, 123, 255]);
+  const B2 = rgb('--b2-rgb', [210, 196, 255]);
+  const v3 = (c) => new Vector3(c[0] / 255, c[1] / 255, c[2] / 255);
+  const mixc = (c, d, t) => c.map((x, i) => Math.round(x + (d[i] - x) * t));
+  const hot = mixc(A2, [255, 255, 255], 0.75);
+
   const DPR = Math.min(window.devicePixelRatio || 1, 1.75);
   renderer.setPixelRatio(DPR);
-  renderer.setClearColor(0x05060a, 1);
+  renderer.setClearColor(0x05060a, 1); // matches --bg
 
   // Fewer particles on phones and on machines with little memory.
   const lowMem = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
@@ -390,6 +404,11 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
     uPulseT: { value: -1 },
     uReduced: { value: reduce ? 1 : 0 },
     uAlpha: { value: 1 },
+    uWarm: { value: v3(A) },
+    uWarm2: { value: v3(A2) },
+    uCool: { value: v3(B) },
+    uHot: { value: v3(hot) },
+    uHand: { value: v3(mixc(A, A2, 0.5)) },
   };
 
   const vert = /* glsl */ `
@@ -399,11 +418,12 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
     uniform float uScA; uniform float uScB; uniform vec3 uOffA; uniform vec3 uOffB;
     uniform mat3 uRot; uniform float uPx; uniform vec3 uMouse; uniform float uMouseStr;
     uniform vec3 uPulseO; uniform float uPulseT; uniform float uReduced; uniform float uAlpha;
+    uniform vec3 uWarm; uniform vec3 uWarm2; uniform vec3 uCool; uniform vec3 uHot; uniform vec3 uHand;
     varying vec3 vColor; varying float vAlpha;
-    const vec3 WARM = vec3(1.0, 0.55, 0.25);
-    const vec3 COOL = vec3(0.40, 0.74, 1.0);
-    const vec3 HOT = vec3(1.0, 0.95, 0.88);
-    const vec3 HAND = vec3(1.0, 0.66, 0.46);
+    #define WARM uWarm
+    #define COOL uCool
+    #define HOT uHot
+    #define HAND uHand
     vec3 rawShape(float s){
       if (s < 0.5) return position;
       if (s < 1.5) return p1;
@@ -434,7 +454,7 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
         pos = q + vec3(sin(t * 0.08 + q.y * 0.35) * 0.5, cos(t * 0.06 + q.x * 0.3) * 0.35, 0.0);
         tint = mix(WARM, COOL, step(0.45, aRnd.y));
       }
-      else { pos = q; tint = mix(WARM, vec3(1.0, 0.8, 0.62), aRnd.y); }
+      else { pos = q; tint = mix(WARM, uWarm2, aRnd.y); }
     }
     void main(){
       float t = uTime;
@@ -649,11 +669,11 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
   /* ---- bloom: a soft spill of light behind the current shape ---- */
   const bloom = document.getElementById('bloom');
   const BL = [
-    { c: [255, 150, 80], o: 0.62, s: 1.0 },
-    { c: [190, 170, 255], o: 0.16, s: 1.5 },
-    { c: [110, 190, 255], o: 0.5, s: 0.85 },
-    { c: [120, 150, 255], o: 0.05, s: 1.6 },
-    { c: [255, 165, 105], o: 0.2, s: 1.3 },
+    { c: A, o: 0.62, s: 1.0 },
+    { c: mixc(A, B, 0.5), o: 0.16, s: 1.5 },
+    { c: B, o: 0.5, s: 0.85 },
+    { c: mixc(B, B2, 0.3), o: 0.05, s: 1.6 },
+    { c: mixc(A, A2, 0.3), o: 0.2, s: 1.3 },
   ];
   const anchors = [lapAnchor, [0, 0, 0], phoneAnchor, [0, 0, 0], [0, 0, 0]];
   const aA = new Vector3();
