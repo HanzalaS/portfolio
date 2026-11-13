@@ -56,6 +56,8 @@ for await (const file of files(DIST)) {
 
         // A plain link loads nothing, but <a ping> does.
         if (name === 'a' && key !== 'ping') continue;
+        // <link rel="canonical|alternate|me"> only names a URL; it loads nothing.
+        if (name === 'link' && key === 'href' && /\srel\s*=\s*["']?(canonical|alternate|me)\b/i.test(attrs)) continue;
 
         if (key === 'style' && /url\(/i.test(value)) {
           for (const m of value.matchAll(/url\(\s*['"]?([^'")]+)/gi)) if (external(m[1])) problems.push(`${rel}: style url(${m[1]})`);
