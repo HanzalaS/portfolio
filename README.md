@@ -22,8 +22,8 @@ npm run dev      # http://localhost:4321
 npm run build    # builds to dist/ and runs the origin check
 ```
 
-## The old site
-The previous single-page site lives in `legacy/` until the new one launches.
+## Live
+https://hanzalas.github.io/portfolio/, deployed by GitHub Actions on every push to `main` (see `.github/workflows/deploy.yml`). The previous single-page site is in the Git history.
 
 ## License
-The source code is licensed under the [MIT License](LICENSE). The writing, portrait and app screenshots are © Hanzala Saeed or their respective owners.
+The source code is licensed under the [MIT License](LICENSE). The writing and portrait are © Hanzala Saeed.
