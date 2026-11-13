@@ -1,0 +1,96 @@
+---
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '../styles/cinematic.css';
+import interLatin from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
+import Socials from '../components/Socials.astro';
+import { site } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** The home page carries the particle film; plain pages only get the glow. */
+  film?: boolean;
+  noindex?: boolean;
+}
+
+const { title, description = site.description, film = false, noindex = false } = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
+const year = new Date().getFullYear();
+const home = film ? '' : '/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    {
+      /* Strict policy for the built site: everything comes from this site, nothing else.
+         Skipped in `astro dev`, whose server injects its own scripts and styles. */
+      import.meta.env.PROD && (
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"
+        />
+      )
+    }
+    <meta name="referrer" content="no-referrer" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.name} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#05060a" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    {film && <canvas id="gl" aria-hidden="true"></canvas>}
+    <div id="bloom" aria-hidden="true"></div>
+    <div class="fb-glow" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="top" id="top">
+      <a class="mark" href={`${home}#main`} aria-label={`${site.name}, home`}>
+        <i></i><span class="full">{site.name}</span><span class="short">HS</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href={`${home}#work`}>Work</a>
+        <a href={`${home}#writing`}>Writing</a>
+        <a class="opt" href={`${home}#about`}>About</a>
+        <a class="pill" href="#contact">Say hello</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer id="contact" aria-labelledby="c-h">
+      <div class="hello-space" aria-hidden="true"><span class="fb-hello">hello.</span></div>
+      <div class="contact">
+        <h2 id="c-h" class="rv">Got something that should <em>leave the laptop?</em></h2>
+        <div class="mail-row rv">
+          <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
+          <button class="copy" type="button" id="copy" data-email={site.email}>Copy</button>
+          <span class="sr" role="status" id="copy-status"></span>
+        </div>
+        <Socials class="rv" />
+        <div class="base">
+          <span>{site.name} · {site.role} · {site.place}, Germany</span>
+          <span><a href="/colophon/">No cookies, no tracking.</a></span>
+          <span>© {year}</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../scripts/site.js"></script>
+  </body>
+</html>

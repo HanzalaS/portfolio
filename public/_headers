@@ -1,0 +1,8 @@
+# Response headers for hosts that read a _headers file (Cloudflare Pages, Netlify).
+# The same policy also ships in every page as a <meta> tag, but only a header can stop framing.
+/*
+  Content-Security-Policy: default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()

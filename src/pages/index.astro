@@ -1,0 +1,342 @@
+---
+import { Image, Picture } from 'astro:assets';
+import Layout from '../layouts/Cinematic.astro';
+import Socials from '../components/Socials.astro';
+import portrait from '../assets/portrait.webp';
+import kalpal from '../assets/work/kalpal.jpg';
+import sercus from '../assets/work/sercus.jpg';
+import bayline from '../assets/work/bayline.jpg';
+import simco from '../assets/work/simco.jpg';
+
+const arrowOut =
+  '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M4 10l6-6M5 4h5v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+const apps = [
+  {
+    name: 'KalPal',
+    meta: ['2025', 'Co-founder'],
+    tone: 'cool',
+    img: kalpal,
+    alt: 'KalPal home screen',
+    what: 'An AI nutrition coach for people who gave up on food tracking.',
+    story:
+      'KalPal began with a simple question: why does eating better feel like homework? As a co-founder, I had no one to hand problems to. Product, design, subscriptions, store reviews and the first beta were all ours to get right.',
+    lesson: 'Co-founding taught me that the product is every decision, not just the code.',
+    links: [],
+  },
+  {
+    name: 'Sercus',
+    meta: ['2025', 'Fintech'],
+    tone: 'warm',
+    img: sercus,
+    alt: 'Sercus wallet screen',
+    what: 'A loyalty wallet for customers and a payments app for merchants: two apps, one platform.',
+    lesson: 'When money moves, every edge case is a promise. Building both sides of the counter taught me to design for the person on the other end too.',
+    links: [
+      { label: 'Sercus Pay', href: 'https://apps.apple.com/us/app/sercus-pay/id6751137892' },
+      { label: 'Sercus for Business', href: 'https://apps.apple.com/us/app/sercus-for-business/id6751293614' },
+    ],
+  },
+  {
+    name: 'Bayline',
+    meta: ['2025', 'AI vision'],
+    tone: 'warm',
+    img: bayline,
+    alt: 'Bayline counting screen with a sample of shrimp larvae',
+    what: 'A camera app that counts shrimp larvae for hatcheries in India.',
+    lesson: "The hard part of an AI product isn't the model. It's earning the trust of someone who needs the count to be right.",
+    links: [
+      { label: 'App Store', href: 'https://apps.apple.com/in/app/bayline/id6748222604' },
+      { label: 'Google Play', href: 'https://play.google.com/store/apps/details?id=com.hari_shrimp.bayline' },
+    ],
+  },
+  {
+    name: 'Simco',
+    meta: ['2025', 'Field teams'],
+    tone: 'cool',
+    img: simco,
+    alt: 'Simco task list screen',
+    what: "An app for an engineering firm's field staff: tasks, attendance and live location.",
+    lesson: 'Software that tracks people has to be honest about it first. Consent and battery life were the product, not the fine print.',
+    links: [{ label: 'Google Play', href: 'https://play.google.com/store/apps/details?id=com.simco.employeeapp' }],
+  },
+];
+
+const posts = [
+  {
+    title: 'Clean and Scalable API Status Handling in Flutter',
+    where: 'Medium',
+    date: 'Aug 2025',
+    excerpt: 'Loading, empty and error states are part of the product, not an afterthought.',
+    href: 'https://medium.com/@hanzalasaeed47/clean-and-scalable-api-status-handling-in-flutter-ddf0817c20d3',
+  },
+  {
+    title: 'Handling Tokens in a Flutter App',
+    where: 'Medium',
+    date: 'Jul 2024',
+    excerpt: 'The best security is the kind your users never have to think about.',
+    href: 'https://medium.com/@hanzalasaeed47/handling-tokens-in-a-flutter-app-a-comprehensive-guide-954c58f50661',
+  },
+];
+---
+
+<Layout film>
+  <section class="hero" aria-labelledby="name">
+    <div class="hero-inner">
+      <div class="eyebrow in-hero d1">
+        <span>Full Stack AI Engineer</span><span class="sep" aria-hidden="true"></span><span>Nuremberg, Germany</span>
+        <span class="clock" id="clock"></span>
+      </div>
+      <h1 id="name" class="in-hero d2">Hanzala <span class="l2">Saeed</span></h1>
+      <p class="lede in-hero d3">
+        Founding engineer at <strong>DeepMask</strong>, building a sovereign, GDPR-first AI workspace for Europe.
+      </p>
+      <Socials class="in-hero d4" />
+      <p class="hint in-hero d5"><span class="ring" aria-hidden="true"></span><span id="hint-text">Move through the light. Click to send a pulse.</span></p>
+    </div>
+    <a class="cue in-hero d5" href="#film"><span>Scroll to watch it leave</span><span class="line" aria-hidden="true"></span></a>
+  </section>
+
+  <section id="film" aria-label="From my laptop to someone's hands">
+    <div class="stage">
+      <div class="cap c1">
+        <span class="act">Act I · The laptop</span>
+        <h2>It starts on <em>a laptop.</em></h2>
+        <p>An idea, a database, and a button that doesn't work yet.</p>
+      </div>
+      <div class="cap c2 center">
+        <span class="act">Act II · The leap</span>
+        <h2>Then it has <em>to leave.</em></h2>
+        <p>Out of localhost, and into the world.</p>
+      </div>
+      <div class="cap c3">
+        <span class="act">Act III · The hands</span>
+        <h2>And ends up in <em>someone's hands.</em></h2>
+        <blockquote>I like the moment something I built leaves my laptop and ends up in someone's hands.</blockquote>
+      </div>
+      <div class="film-prog" aria-hidden="true">
+        <div class="tick">Laptop<b></b></div>
+        <div class="tick">The leap<b></b></div>
+        <div class="tick">Hands<b></b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="about" aria-labelledby="about-l">
+    <h2 class="label" id="about-l">About</h2>
+    <div class="about">
+      <p class="statement" id="statement">
+        I'm a full-stack AI engineer and the founding engineer at <span class="k">DeepMask.</span> Before that I spent four and
+        a half years shipping more than ten apps people carry every day, and co-founded <span class="k">KalPal,</span> an AI
+        nutrition coach.
+      </p>
+      <figure class="portrait rv">
+        <Picture
+          src={portrait}
+          formats={['avif', 'webp']}
+          widths={[360, 560, 800]}
+          sizes="(max-width: 900px) 420px, 28vw"
+          fallbackFormat="webp"
+          alt="Portrait of Hanzala Saeed"
+          loading="lazy"
+        />
+        <figcaption><span>Hanzala Saeed</span><span>Nuremberg</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec" id="beliefs" aria-labelledby="bel-l">
+    <h2 class="label" id="bel-l">What I believe</h2>
+    <ol class="beliefs">
+      <li><span class="n">01</span><span class="t">Ship early, then <em>listen</em> to real users.</span></li>
+      <li><span class="n">02</span><span class="t">Privacy is a <em>product decision,</em> not a legal footnote.</span></li>
+      <li><span class="n">03</span><span class="t">Own the <em>whole thing,</em> from the database to the button.</span></li>
+      <li><span class="n">04</span><span class="t">Stay curious, and stay a <em>beginner</em> at something.</span></li>
+    </ol>
+  </section>
+
+  <section class="sec" id="work" aria-labelledby="work-h">
+    <p class="label">Work</p>
+    <div class="sec-head">
+      <h2 id="work-h" class="rv">10+ apps shipped. <em>A few of them.</em></h2>
+      <p class="rv">From fintech wallets to AI for shrimp hatcheries, and now sovereign AI for Europe.</p>
+    </div>
+
+    <div class="work">
+      <article class="card feature rv" aria-labelledby="w-deepmask">
+        <div class="art" aria-hidden="true">
+          <div class="ring-art">
+            <svg viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="dmg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#ffd2a6"></stop>
+                  <stop offset="1" stop-color="#7cc8ff"></stop>
+                </linearGradient>
+              </defs>
+              <g class="spin">
+              <circle class="orbit" cx="100" cy="100" r="78"></circle>
+              <circle class="orbit" cx="100" cy="100" r="58"></circle>
+              {
+                Array.from({ length: 12 }, (_, i) => {
+                  const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+                  return (
+                    <circle
+                      class="st"
+                      cx={(100 + Math.cos(a) * 68).toFixed(2)}
+                      cy={(100 + Math.sin(a) * 68).toFixed(2)}
+                      r="3.2"
+                    ></circle>
+                  );
+                })
+              }
+              </g>
+              <circle class="core" cx="100" cy="100" r="30"></circle>
+              <path class="lock" d="M92 99v-5a8 8 0 0 1 16 0v5M87 99h26v17H87zM100 105v4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="meta"><span>2025 – now</span><span>Founding engineer</span></div>
+          <h3 id="w-deepmask">DeepMask</h3>
+          <p class="what">
+            A sovereign, GDPR-first AI workspace for European organizations. I've been building it since the first commit,
+            across the whole stack.
+          </p>
+          <p class="lesson">A demo takes an afternoon. A product people trust with their documents takes care at every layer.</p>
+          <div class="out">
+            <a href="https://chat.deepmask.io/" rel="noopener" target="_blank">chat.deepmask.io <Fragment set:html={arrowOut} /></a>
+          </div>
+        </div>
+      </article>
+
+      {
+        apps.map((app) => (
+          <article class:list={['card rv', app.tone === 'cool' && 'cool']} aria-labelledby={`w-${app.name.toLowerCase()}`}>
+            <div class="art">
+              <div class="phone">
+                <div class="screen">
+                  <Image src={app.img} alt={app.alt} width={420} loading="lazy" />
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="meta">
+                <span>{app.meta[0]}</span>
+                <span>{app.meta[1]}</span>
+              </div>
+              <h3 id={`w-${app.name.toLowerCase()}`}>{app.name}</h3>
+              <p class="what">{app.what}</p>
+              {app.story && <p class="story">{app.story}</p>}
+              <p class="lesson">{app.lesson}</p>
+              {app.links.length > 0 && (
+                <div class="out">
+                  {app.links.map((l) => (
+                    <a href={l.href} rel="noopener" target="_blank">
+                      {l.label} <Fragment set:html={arrowOut} />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="more-work rv">
+      Plus client apps along the way, from HR tools to marketplaces, each one shipped to someone else's users.
+    </p>
+  </section>
+
+  <section class="sec" id="writing" aria-labelledby="writing-h">
+    <p class="label">Writing</p>
+    <div class="sec-head">
+      <h2 id="writing-h" class="rv">Notes from <em>the work.</em></h2>
+      <p class="rv">What building real products keeps teaching me, written down.</p>
+    </div>
+
+    <div class="writing">
+      <a
+        class="post big rv"
+        href="https://www.linkedin.com/pulse/ai-generated-slides-engineering-made-usable-hanzala-saeed-tzzff/"
+        rel="noopener"
+        target="_blank"
+      >
+        <div class="art" aria-hidden="true">
+          <div class="slides">
+            <div class="sl s4"></div>
+            <div class="sl s3"></div>
+            <div class="sl s2"></div>
+            <div class="sl s1"><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div>
+          <div class="meta"><span>LinkedIn</span><span>Oct 2026</span></div>
+          <h3>AI Generated the Slides. Engineering Made It Usable.</h3>
+          <p class="excerpt">The model can finish its part while the product still has work to do.</p>
+        </div>
+        <span class="read">Read on LinkedIn <Fragment set:html={arrowOut} /></span>
+      </a>
+
+      {
+        posts.map((p) => (
+          <a class="post cool rv" href={p.href} rel="noopener" target="_blank">
+            <div>
+              <div class="meta">
+                <span>{p.where}</span>
+                <span>{p.date}</span>
+              </div>
+              <h3>{p.title}</h3>
+              <p class="excerpt">{p.excerpt}</p>
+            </div>
+            <span class="read">
+              Read on {p.where} <Fragment set:html={arrowOut} />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="sec" id="journey" aria-labelledby="j-h">
+    <p class="label">The route so far</p>
+    <div class="journey">
+      <div class="j-side">
+        <h2 id="j-h" class="rv">Karachi to <em>Nuremberg.</em></h2>
+        <p class="rv">Every stop taught me something about getting work out of the building.</p>
+      </div>
+      <ol class="route" id="route">
+        <li>
+          <span class="node" aria-hidden="true"></span>
+          <div class="place">Karachi</div>
+          <h3>NED University</h3>
+          <p>Where I started, and where I fell for software people carry in their pockets.</p>
+        </li>
+        <li>
+          <span class="node" aria-hidden="true"></span>
+          <div class="place">Reactree</div>
+          <h3>Client apps, the first of many</h3>
+          <p>Shipping for someone else's users, and learning what that asks of you.</p>
+        </li>
+        <li>
+          <span class="node" aria-hidden="true"></span>
+          <div class="place">RightSolution</div>
+          <h3>Web to mobile</h3>
+          <p>Led the move from a product people opened on a desktop to an app they carry.</p>
+        </li>
+        <li>
+          <span class="node" aria-hidden="true"></span>
+          <div class="place">Independent</div>
+          <h3>Freelance, and co-founding KalPal</h3>
+          <p>No one to hand problems to, so every problem was mine.</p>
+        </li>
+        <li class="now">
+          <span class="node" aria-hidden="true"></span>
+          <div class="place">Nuremberg <b>Now</b></div>
+          <h3>Founding engineer at DeepMask</h3>
+          <p>Building AI that Europe can actually trust with its data.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+</Layout>
