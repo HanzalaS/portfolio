@@ -13,9 +13,11 @@ interface Props {
   /** The home page carries the particle film; plain pages only get the glow. */
   film?: boolean;
   noindex?: boolean;
+  /** Set on article pages, so link previews know it's an article and when it was published. */
+  article?: { published: Date };
 }
 
-const { title, description = site.description, film = false, noindex = false } = Astro.props;
+const { title, description = site.description, film = false, noindex = false, article } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
 const year = new Date().getFullYear();
 const home = film ? '' : base;
@@ -49,7 +51,8 @@ const ogImage = new URL(`${base}og.png?v=aurora`, Astro.site).href;
     <link rel="canonical" href={pageUrl} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    {article && <meta property="article:published_time" content={article.published.toISOString()} />}
     <meta property="og:url" content={pageUrl} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:image" content={ogImage} />

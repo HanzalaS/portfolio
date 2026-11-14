@@ -14,6 +14,12 @@ const sstep = (a, b, v) => {
   return t * t * (3 - 2 * t);
 };
 
+/* ---------- articles: code that scrolls sideways can be reached by keyboard ---------- */
+for (const pre of $$('.prose pre')) {
+  pre.tabIndex = 0;
+  pre.setAttribute('aria-label', `Code, ${pre.dataset.language || 'snippet'}`);
+}
+
 /* ---------- local time in Nuremberg ---------- */
 const clock = $('#clock');
 if (clock) {

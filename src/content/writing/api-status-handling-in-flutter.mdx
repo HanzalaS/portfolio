@@ -1,0 +1,131 @@
+---
+title: Clean and Scalable API Status Handling in Flutter
+excerpt: Loading, empty and error states are part of the product, not an afterthought.
+date: 2025-08-05
+origin: { name: Medium, url: 'https://medium.com/@hanzalasaeed47/clean-and-scalable-api-status-handling-in-flutter-ddf0817c20d3' }
+---
+
+Hello people! I'm Hanzala 👋
+
+You might've come across situations where your API throws a 404, returns an empty response, or just crashes, and all the user sees is a blank white screen. No loading spinner, no error message…
+
+Pretty frustrating, right?
+
+That's exactly why it's important to handle all possible cases when making API calls. You can't just rely on bools like `isLoading`, `hasError`, `isEmpty`. It might work in small apps, but trust me, it doesn't scale when your app grows. It also doesn't cover everything, and it's messy as there is no pattern in the app for API calls.
+
+I've been using a clean and scalable pattern across all my apps where I manage API call states using a single enum. Easy to read, very simple and easy to maintain.
+
+So in this article, I'll show you how I handle API call statuses in my projects. I'll also give you code examples, tips for rendering UI based on the status, and some best practices that I personally follow.
+
+Let's get into it!
+
+## The ApiCallStatus enum
+
+A single enum declaration and a clean pattern make API status handling easy and readable. You could define your enum like this:
+
+```dart
+enum ApiCallStatus {
+  loading,
+  success,
+  error,
+  empty,
+  holding,
+  cache,
+  refresh,
+}
+```
+
+You might be thinking: why not just loading, success and error? For advanced cases like waiting for user input, fetching in the background or getting cached data, we use the same enum and get rid of all the bools like `isFetching`, `isRefreshing`, `hasCachedData` and so on.
+
+## Implementing it in controllers
+
+Here's sample code for reference from one of my projects:
+
+```dart
+Future<void> fetchDealerInfo() async {
+  try {
+    dealerInfoApiCallStatus.value = ApiCallStatus.loading;
+
+    final result = await _authRepository.getDealerInfo();
+
+    result.fold(
+      (failure) {
+        dealerInfoApiCallStatus.value = ApiCallStatus.error;
+        CustomToast.showErrorTopSnackBar(
+          message: failure.message,
+        );
+      },
+      (response) {
+        if (response.status == true) {
+          dealerInfo.value = response.data;
+          dealerInfoApiCallStatus.value = ApiCallStatus.success;
+        } else {
+          dealerInfoApiCallStatus.value = ApiCallStatus.error;
+          CustomToast.showErrorTopSnackBar(
+            message: response.message,
+          );
+        }
+      },
+    );
+  } catch (e) {
+    dealerInfoApiCallStatus.value = ApiCallStatus.error;
+    CustomToast.showErrorTopSnackBar(
+      message: 'An error occurred while loading dealer information',
+    );
+  }
+}
+```
+
+This block handles the API call efficiently and lets the UI render correctly in every case. We'll get to that in the next section.
+
+Focus only on setting the status values. Calling the API through a repository is a topic for another day.
+
+## Rendering UI based on status
+
+To show data in the UI from the status we set in the controller, we can keep it simple and use a good old switch. Here's a snippet for the same API call:
+
+```dart
+switch (controller.dealerInfoApiCallStatus.value) {
+  case ApiCallStatus.loading:
+    return _buildLoadingState();
+  case ApiCallStatus.error:
+    return _buildErrorState();
+  case ApiCallStatus.success:
+    return _buildContent();
+  case ApiCallStatus.empty:
+    return _buildEmptyState();
+  default:
+    return Container();
+}
+```
+
+You can play around and do so much with this. Try making each state its own widget, like `CustomLoadingState`, and pass in a message. That makes it very modular.
+
+Keep it reactive using `Obx`, `ChangeNotifier` or similar to listen for changes.
+
+## Best practices I personally follow
+
+I've used this enum-based status handling in almost all my apps. Over time, I've figured out a few things that work well and some that don't. So here are a few quick practices I always follow:
+
+- Always set the status to loading **at the start** of the API call. Don't skip it.
+- If your API gives an empty response, don't show a blank screen. Use the empty status and show a proper message or image.
+- Always show feedback on error. Use a snackbar or toast. Never fail silently.
+- Keep your UI modular. Use widgets like `CustomErrorState` and `CustomEmptyState`, and pass your messages in. It looks clean and it's reusable.
+- Don't mix in bools like `isFetching` and `isRefreshing`. Stick to one enum. It's cleaner and easier to manage.
+
+## Handling multiple API calls on one screen
+
+If you're calling more than one API in the same controller (which happens a lot), just create a separate status variable for each call.
+
+```dart
+final dealerInfoApiCallStatus = ApiCallStatus.loading.obs;
+final salesReportApiCallStatus = ApiCallStatus.loading.obs;
+```
+
+Simple as that. Each has its own status, and each can be handled separately in the UI.
+
+So yeah, this is how I handle API call statuses in my Flutter apps using a simple enum. No fancy state management magic, just a clean and readable approach that works in real projects.
+
+If you found this helpful or use something similar, I'd love to know. Drop your thoughts or ideas. Always happy to learn new ways too.
+
+<p class="sign">Peace ✌️<br />— Hanzala</p>

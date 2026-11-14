@@ -1,0 +1,100 @@
+---
+title: AI Generated the Slides. Engineering Made It Usable.
+excerpt: The model can finish its part while the product still has work to do.
+date: 2026-10-09
+origin: { name: LinkedIn, url: 'https://www.linkedin.com/pulse/ai-generated-slides-engineering-made-usable-hanzala-saeed-tzzff/' }
+featured: true
+---
+import SlidesFlow from '../../components/diagrams/SlidesFlow.astro';
+import SameTask from '../../components/diagrams/SameTask.astro';
+
+<p class="lead">What building presentation generation at DeepMask taught me about usable AI products.</p>
+
+A PowerPoint file can open successfully and still be useless in a meeting.
+
+The text can be too small to read. A proposed target can appear as an achieved result. The branding someone selected in the preview can be missing from the download. The file exists, but the person who asked for it still has a problem.
+
+At DeepMask, I've been working on PowerPoint integration, organization branding, and generated-file handling. That work has made me think more carefully about what it means for an AI feature to succeed.
+
+My background is in web and mobile development, so many of the questions feel familiar. What does the user see while waiting? What happens if an operation fails or starts twice? Does the result survive the next step in the workflow?
+
+The difference is that a model now supplies part of the output. We don't know exactly how much text it will produce or which structure it will choose. The application still needs to handle that output predictably.
+
+## The information has to survive the handoff
+
+The user might upload a document, correct a number, and change the intended audience before asking for a presentation. All of that can matter to the deck.
+
+Our presentation generator works from a brief. It doesn't independently receive the entire conversation. A fact can therefore exist in the chat and still be absent from the information the generator receives.
+
+Take a simple example:
+
+> Our current onboarding time is ten business days. Our target is six.
+
+If the brief reduces that to “onboarding: six days,” the generator can make a convincing slide from an incomplete instruction. The number is there, but its meaning has changed.
+
+This is why I pay attention to the brief as a handoff between components. It needs to preserve the audience, the purpose of the presentation, and the context around important facts. Shortening the source is useful only if we keep the distinctions the reader needs.
+
+Here's a simplified view of the workflow. The execution check happens before generation, and saved branding feeds into rendering.
+
+<SlidesFlow />
+
+The preview and downloaded version use the saved presentation content with the selected branding. Human review checks the resulting file and its meaning.
+
+## Valid data can still make an unreadable slide
+
+The model supplies structured slide data: fields such as the layout, title, table rows, and speaker notes. A simplified table slide might look like this:
+
+```json
+{
+  "layout": "table",
+  "title": "Pilot budget",
+  "table": {
+    "header": ["Item", "Cost excluding VAT"],
+    "rows": [["Workflow setup", "EUR 8,000"]]
+  }
+}
+```
+
+The application can check whether those fields exist and have the expected types. That gives the renderer a defined input to work with.
+
+But a table can stay within the allowed row count and still have long descriptions in every cell. Its structure is valid. Its content may not fit comfortably on a slide.
+
+A schema can accept a string containing “six days.” It can't establish whether those days represent a target or an achieved result. A layout check can't answer that either. The person using the presentation still needs to review its claims.
+
+## Too much content forces a choice
+
+A dense deck is one of the concrete cases our layout recovery handles. There may be more content than fits within the agreed slide count.
+
+Making the text smaller eventually makes it hard to read. Adding slides changes the scope. Removing text risks losing something important. There is no layout trick that gives us unlimited space.
+
+Our recovery can redistribute content into readable pages. If that expansion would exceed the saved slide limit, supporting content moves into PowerPoint notes. Tests cover preserving the text in slides or notes and retaining the closing slide.
+
+That choice has a consequence: the user may need to check the notes for additional detail. We need to make that visible rather than letting someone assume every part of the source is on screen.
+
+Branding affects this too. A different font can change line wrapping and the space a table needs. Applying a company's fonts therefore has to work with the layout constraints, as well as changing how the deck looks.
+
+## A new call ID doesn't mean a new task
+
+Another case we guard against is repeated generation within one user turn.
+
+A model can call the presentation tool, receive a failure, and try again with a different call identifier. A duplicate-ID check wouldn't catch that. From the user's perspective, it's still the same request, and we could be starting an expensive operation again.
+
+The application tracks whether presentation generation has already been attempted in that turn. Our tests cover repeated calls with fresh identifiers, including after a failed attempt. A new user request can start a new generation.
+
+<SameTask />
+
+The useful lesson here is about where a rule lives. We can tell the model not to retry, but preventing duplicate execution requires a check in the application. The prompt guides the model. The execution layer enforces the rule.
+
+## The preview has to agree with the file
+
+My work includes making organization branding available to the presentation workflow and handling the generated files in the product.
+
+If someone applies branding in the preview, the download needs to reflect that choice. We preserve the structured presentation source so the preview and export can work from the same recovered content, with the selected branding applied.
+
+Tests check those relationships, including explicit branding choices and the rendered slide count. They don't replace opening the actual PowerPoint. It's still worth checking for changed wrapping, missing assets, or content that reads differently once it is presented on a slide.
+
+That final review is where the feature leaves our interface and meets the task someone wanted to complete.
+
+My web and mobile background has been useful here. File handling and failure states are familiar software problems. Generated content adds another source of uncertainty, and it makes defining success more important.
+
+For me, that definition follows the result through to the file someone opens for their meeting. The model can finish its part while the product still has work to do.

@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
 
 // Static site, no server code. Stylesheets are always emitted as files so the
 // Content-Security-Policy can stay at `style-src 'self'` with no inline styles.
@@ -10,6 +11,11 @@ export default defineConfig({
   base: '/portfolio',
   output: 'static',
   trailingSlash: 'ignore',
+  integrations: [mdx()],
+  markdown: {
+    // Prism marks code with classes only; Shiki writes inline styles, which the CSP blocks.
+    syntaxHighlight: 'prism',
+  },
   build: {
     inlineStylesheets: 'never',
   },

@@ -1,0 +1,21 @@
+---
+import Arrow from './Arrow.astro';
+---
+
+<figure class="diagram decide">
+  <figcaption class="d-head">
+    <strong>A fresh call ID can still be the same task</strong>
+    <span>Check the user turn before starting another generation.</span>
+  </figcaption>
+
+  <div class="d-row">
+    <div class="d-box"><b>Tool call</b><span>A model requests presentation generation</span></div>
+    <div class="d-q"><Arrow /><b>Already attempted in this user turn?</b></div>
+    <ul class="d-branches">
+      <li class="d-box"><Arrow /><em class="d-tag">No</em><b>Record attempt and run</b><span>Start generation once; keep state after a failure</span></li>
+      <li class="d-box stop"><Arrow /><em class="d-tag">Yes</em><b>Block repeated generation</b><span>Even with a different tool call identifier</span></li>
+    </ul>
+  </div>
+
+  <p class="d-note">A new user request starts a new turn and can start another generation.</p>
+</figure>

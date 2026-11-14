@@ -1,0 +1,256 @@
+---
+title: Handling Tokens in a Flutter App
+excerpt: The best security is the kind your users never have to think about.
+date: 2024-07-29
+origin: { name: Medium, url: 'https://medium.com/@hanzalasaeed47/handling-tokens-in-a-flutter-app-a-comprehensive-guide-954c58f50661' }
+---
+
+<p class="lead">In modern mobile apps, managing authentication tokens is crucial for secure communication between the client and the server.</p>
+
+In this article, I'll walk you through my approach to handling tokens in a Flutter app using the `flutter_secure_storage` package and the Dio HTTP client. We'll cover how to store, retrieve and refresh tokens seamlessly.
+
+## Introduction
+
+This is my first ever article, and I'm excited to share my insights with you! When building a Flutter app that talks to a backend, you often need to handle authentication tokens. These tokens authenticate API requests and make sure only authorised users can access certain resources. In this guide, I'll show you how to manage them efficiently.
+
+When I searched the internet for this topic, I found that clear and comprehensive articles were lacking. That motivated me to write this guide to help developers understand and implement token management in their Flutter apps.
+
+So, let's dive in and make token handling in Flutter apps a breeze!
+
+## Setting up the token manager
+
+To manage our tokens securely and efficiently, we'll create a `TokenManager` class using the `flutter_secure_storage` package. This class handles storing, retrieving and refreshing tokens.
+
+### The TokenManager class
+
+Let's start by defining the `TokenManager` class. It's a singleton, so there's only one instance managing our tokens throughout the app.
+
+```dart
+class TokenManager {
+  static final TokenManager _instance = TokenManager._internal();
+  String? _accessToken;
+
+  late FlutterSecureStorage _secureStorage;
+
+  TokenManager._internal() {
+    _secureStorage = const FlutterSecureStorage();
+  }
+
+  static TokenManager get instance {
+    return _instance;
+  }
+
+  String? get accessToken => _accessToken;
+```
+
+In this snippet, we initialise a singleton `TokenManager` with a private constructor and a secure storage instance. The singleton pattern gives us a single instance managing our tokens, which is crucial for keeping state consistent.
+
+### Storing and retrieving tokens
+
+Next, let's add methods to store and retrieve tokens securely.
+
+```dart
+  Future<bool> refreshKeyExist() async {
+    try {
+      String? refreshToken = await _secureStorage.read(key: StringConstants.refreshTokenKey);
+      return refreshToken != null;
+    } catch (e) {
+      // handle case where reading the refresh token throws an error.
+      return false;
+    }
+  }
+
+  Future<void> setTokens(String accessToken, {String? refreshToken, bool saveRefreshToken = false}) async {
+    _accessToken = accessToken;
+    if (refreshToken != null && saveRefreshToken) {
+      await _secureStorage.write(key: StringConstants.refreshTokenKey, value: refreshToken);
+    }
+  }
+
+  Future<String?> getRefreshToken() async {
+    try {
+      return await _secureStorage.read(key: StringConstants.refreshTokenKey);
+    } catch (e) {
+      // handle case where reading the refresh token throws an error
+      return null;
+    }
+  }
+```
+
+The `getRefreshToken` method retrieves the stored refresh token, while `refreshKeyExist` checks whether one is available.
+
+### Why store the refresh token?
+
+Storing the refresh token is what makes “remember me” work: the user stays logged in even after the access token expires. The access token usually has a short lifespan, while the refresh token lives longer and is used to get new access tokens.
+
+Here's how it works:
+
+1. **User logs in:** the user receives an access token and a refresh token.
+2. **Storing tokens:** the access token is kept in memory for immediate use, while the refresh token is stored securely on the device.
+3. **Access token expires:** the app uses the refresh token to request a new access token, so the user stays logged in without entering their credentials again.
+4. **“Remember me”:** because the refresh token is stored, the user stays logged in across sessions, which makes for a seamless experience.
+
+### Clearing tokens
+
+```dart
+  Future<void> clearTokens() async {
+    await _secureStorage.delete(key: StringConstants.refreshTokenKey);
+    _accessToken = null;
+  }
+}
+```
+
+The `clearTokens` method deletes the refresh token from secure storage and sets the in-memory access token to null.
+
+## Integrating tokens with Dio interceptors
+
+Now that we have a `TokenManager`, we need to plug it into the Dio client so authentication is handled automatically. This makes sure every API request is authenticated and expired tokens are refreshed seamlessly.
+
+### The AuthInterceptor class
+
+We'll create an `AuthInterceptor` class that adds the token to requests and refreshes it when it expires.
+
+```dart
+class AuthInterceptor extends QueuedInterceptor {
+  final Dio dio;
+
+  AuthInterceptor(this.dio);
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    if (!requiresAuthentication(options)) {
+      handler.next(options);
+      return;
+    }
+
+    final String? accessToken = TokenManager.instance.accessToken;
+
+    if (accessToken != null) {
+      options.headers.addAll({'Authorization': 'Bearer $accessToken'});
+    } else {
+      // Handle case where access token is null
+    }
+
+    handler.next(options);
+  }
+
+  bool requiresAuthentication(RequestOptions options) {
+    // here you can define paths which don't require a token.
+    final paths = ['/sign-in', '/sign-up', '/token/refresh'];
+
+    return !paths.any((path) => options.path.contains(path));
+  }
+}
+```
+
+In `onRequest`, we add the access token to the request headers if it exists. `requiresAuthentication` checks whether the request path needs authentication.
+
+### Handling unauthorised errors
+
+We also need to handle the case where the token expires and the server responds with 401 Unauthorized.
+
+```dart
+@override
+void onError(DioException err, ErrorInterceptorHandler handler) async {
+  if (err.response?.statusCode != 401) {
+    super.onError(err, handler);
+    return;
+  }
+
+  // Handle unauthorized error
+  await handleUnauthorizedError(err, handler);
+}
+
+Future<void> handleUnauthorizedError(DioException err, ErrorInterceptorHandler handler) async {
+  TokenManager tokenManager = TokenManager.instance;
+  final String? refreshToken = await tokenManager.getRefreshToken();
+
+  if (refreshToken == null) {
+    // No refresh token available, clear tokens and redirect to login screen
+    final context = Globals.navigatorKey.currentContext;
+    if (context != null) {
+      tokenManager.clearTokens();
+      context.goNamed(LoginScreen.id); // Custom navigation action
+    } else {
+      // handle case where context is null
+    }
+    super.onError(err, handler);
+    return;
+  }
+
+  // Attempt to refresh the token
+  final response = await _apiManager.refreshToken(token: refreshToken);
+
+  if (!response.success) {
+    // Failed to refresh token, handle error appropriately
+    final currentContext = Globals.navigatorKey.currentContext;
+    if (currentContext != null) {
+      CustomSnackbar.showFailure(currentContext, response.message); // Custom error display
+      tokenManager.clearTokens();
+      currentContext.goNamed(LoginScreen.id); // Custom navigation action
+    } else {
+      // handle case where context is null
+    }
+    super.onError(err, handler);
+    return;
+  }
+
+  // Successfully refreshed the token, update stored tokens and retry the original request
+  tokenManager.setTokens(
+    response.data["token"],
+    refreshToken: response.data["refresh_token"],
+    saveRefreshToken: true,
+  );
+
+  await retryRequestWithNewToken(err, handler, response.data["token"]);
+}
+```
+
+In `onError`, we check whether the error is a 401. If it is, we call `handleUnauthorizedError` to try refreshing the token. That method:
+
+- Retrieves the refresh token from secure storage.
+- If there's no refresh token, clears the tokens and sends the user to the login screen.
+- If there is one, tries to get a new access token by calling `_apiManager.refreshToken`.
+- If the refresh fails, handles the error (for example, shows a message and goes to the login screen).
+- If the refresh succeeds, updates the stored tokens and retries the original request with the new access token.
+
+### Retrying requests with new tokens
+
+Finally, once the token is refreshed, we retry the original request with the new access token.
+
+```dart
+Future<void> retryRequestWithNewToken(DioException err, ErrorInterceptorHandler handler, String newToken) async {
+  final updatedOptions = Options(
+    method: err.requestOptions.method,
+    headers: {"Authorization": "Bearer $newToken"},
+  );
+
+  try {
+    final retryResponse = await dio.request(
+      err.requestOptions.path,
+      options: updatedOptions,
+      data: err.requestOptions.data,
+      queryParameters: err.requestOptions.queryParameters,
+    );
+    handler.resolve(retryResponse);
+  } catch (retryError, retryStackTrace) {
+    handler.reject(DioException(
+      requestOptions: err.requestOptions,
+      error: retryError,
+      stackTrace: retryStackTrace,
+    ));
+  }
+}
+```
+
+In `retryRequestWithNewToken`, we:
+
+- Update the request options with the new token.
+- Retry the original request with it.
+- Handle any error that happens during the retry.
+
+## Conclusion
+
+We've covered how to handle tokens in a Flutter app with a `TokenManager` class and an `AuthInterceptor` for Dio. Your tokens are stored securely and refreshed automatically when they expire, so users get a seamless experience. With these steps, you can manage authentication tokens well in your own Flutter app, improving both security and usability.
+
+I hope you found this guide helpful. Your feedback is invaluable, so please share your thoughts, suggestions or any questions you have. Happy coding!

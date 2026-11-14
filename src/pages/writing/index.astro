@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Cinematic.astro';
+import { articles, shortDate, minutes } from '../../writing';
+import { base } from '../../site';
+
+const all = await articles();
+---
+
+<Layout title="Writing" description="Notes from the work: what building real products keeps teaching me.">
+  <section class="w-index" aria-labelledby="w-h">
+    <p class="label">Writing</p>
+    <h1 id="w-h">Notes from <em>the work.</em></h1>
+    <p class="w-intro">What building real products keeps teaching me, written down.</p>
+    <ol class="w-list">
+      {
+        all.map((a) => (
+          <li>
+            <a href={`${base}writing/${a.id}/`}>
+              <span class="w-meta">
+                <time datetime={a.data.date.toISOString().slice(0, 10)}>{shortDate(a.data.date)}</time>
+                <span>{minutes(a)} min</span>
+              </span>
+              <span class="w-title">{a.data.title}</span>
+              <span class="w-excerpt">{a.data.excerpt}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Layout>

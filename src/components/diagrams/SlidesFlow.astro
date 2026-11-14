@@ -1,0 +1,32 @@
+---
+import Arrow from './Arrow.astro';
+---
+
+<figure class="diagram flow">
+  <figcaption class="d-head">
+    <strong>How a presentation reaches the user</strong>
+    <span>The model authors content. The application controls execution and delivery.</span>
+  </figcaption>
+
+  <p class="d-label" id="flow-a">Prepare and author</p>
+  <ol class="d-steps" aria-labelledby="flow-a">
+    <li><b>Conversation and sources</b><span>Documents and context</span></li>
+    <li><Arrow /><b>Complete brief</b><span>Purpose, audience, facts and constraints</span></li>
+    <li><Arrow /><b>Execution guard</b><span>One attempt per user turn</span></li>
+    <li class="model"><Arrow /><b>Authoring model</b><span>Produces structured slide data</span></li>
+  </ol>
+
+  <p class="d-label" id="flow-b">Check and deliver</p>
+  <ol class="d-steps" aria-labelledby="flow-b">
+    <li><b>Validate the structure</b><span>Fields, types and limits</span></li>
+    <li><Arrow /><b>Recover layout</b><span>Fit content; keep supporting text in notes</span></li>
+    <li>
+      <Arrow /><b>Render and save</b><span>PowerPoint and its source</span>
+      <span class="d-input">+ Saved brand: logo, colours and fonts</span>
+    </li>
+    <li><Arrow /><b>Preview and download</b><span>Shared content and selected branding</span></li>
+    <li class="human"><Arrow /><b>Human review</b><span>Open the actual file; check claims and appearance</span></li>
+  </ol>
+
+  <p class="d-note">Conceptual flow. Branding changes in the preview also re-render from the saved source.</p>
+</figure>
