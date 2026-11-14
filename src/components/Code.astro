@@ -1,0 +1,6 @@
+---
+// Article code blocks scroll sideways, so they are focusable and named in the HTML itself (works without JS).
+const { 'data-language': lang, ...rest } = Astro.props;
+---
+
+<pre {...rest} data-language={lang} tabindex="0" role="group" aria-label={`Code, ${lang || 'snippet'}`}><slot /></pre>

@@ -23,8 +23,11 @@ const sstep = (a, b, v) => {
   return t * t * (3 - 2 * t);
 };
 const lerp = (a, b, t) => a + (b - a) * t;
+// Hand the main thread back between set-up steps so no single task blocks input for long.
+const yieldNow = () => (globalThis.scheduler?.yield ? globalThis.scheduler.yield() : new Promise((r) => setTimeout(r, 0)));
 
-export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost = () => {}, onRestored = () => {} }) {
+export async function initFilm({ canvas, film, about, contact, reduce, coarse, onLost = () => {}, onRestored = () => {} }) {
+  await yieldNow();
   let renderer;
   try {
     renderer = new WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
@@ -32,6 +35,9 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
     return false;
   }
   if (!renderer || !renderer.getContext()) return false;
+  // A context lost while the film is still setting up ends set-up; the CSS fallback stays.
+  const lostEarly = new Promise((r) => canvas.addEventListener('webglcontextlost', () => r('lost'), { once: true }));
+  await yieldNow();
 
   // The brand palette lives in CSS; the film reads it so colours stay in one place.
   const css = getComputedStyle(document.documentElement);
@@ -354,8 +360,10 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
 
   const S0 = laptop();
   const S1 = stream();
+  await yieldNow();
   const S2 = phoneHand();
   const S3 = field();
+  await yieldNow();
   const S4 = hello();
   const rnd = new Float32Array(N * 4);
   const glow = new Float32Array(N * 4);
@@ -528,9 +536,12 @@ export function initFilm({ canvas, film, about, contact, reduce, coarse, onLost 
   };
 
   /* shader compile check: fail soft to the CSS fallback */
+  // compileAsync lets the GPU compile in parallel (KHR_parallel_shader_compile) instead of stalling the page;
+  // the link status is read only once the program is ready, so that read no longer waits on the GPU.
   try {
     renderer.setSize(window.innerWidth, window.innerHeight, false);
-    renderer.compile(scene, camera);
+    await yieldNow();
+    if ((await Promise.race([renderer.compileAsync(scene, camera), lostEarly])) === 'lost') return fail();
     const gl = renderer.getContext();
     const progs = renderer.info.programs;
     if (progs && progs.length) {

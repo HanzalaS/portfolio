@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Layout from '../../layouts/Cinematic.astro';
+import Code from '../../components/Code.astro';
 import { articles, longDate, shortDate, minutes, type Article } from '../../writing';
 import { base } from '../../site';
 
@@ -35,7 +36,7 @@ const { Content } = await render(entry);
     </header>
 
     <div class="prose">
-      <Content />
+      <Content components={{ pre: Code }} />
     </div>
 
     <footer class="a-foot">

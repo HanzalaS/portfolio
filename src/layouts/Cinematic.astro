@@ -1,6 +1,5 @@
 ---
 import '@fontsource-variable/inter-tight/wght.css';
-import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import '../styles/cinematic.css';
 import interLatin from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
@@ -74,8 +73,8 @@ const ogImage = new URL(`${base}og.png?v=aurora`, Astro.site).href;
     <div class="grain" aria-hidden="true"></div>
 
     <header class="top" id="top">
-      <a class="mark" href={`${home}#main`} aria-label={`${site.name}, home`}>
-        <i></i><span class="full">{site.name}</span><span class="short">HS</span>
+      <a class="mark" href={`${home}#main`}>
+        <i></i><span class="full">{site.name}</span><span class="short">HS<span class="sr"> {site.name}</span></span>
       </a>
       <nav class="nav" aria-label="Main">
         <a href={`${home}#work`}>Work</a>
@@ -90,7 +89,7 @@ const ogImage = new URL(`${base}og.png?v=aurora`, Astro.site).href;
     </main>
 
     <footer id="contact" aria-labelledby="c-h">
-      <div class="hello-space" aria-hidden="true"><span class="fb-hello">hello.</span></div>
+      <div class="hello-space" aria-hidden="true"><span class="fb-hello"></span></div>
       <div class="contact">
         <h2 id="c-h" class="rv">Got something that should <em>leave the laptop?</em></h2>
         <div class="mail-row rv">

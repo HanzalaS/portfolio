@@ -179,6 +179,11 @@ em,
   opacity: 0;
 }
 
+/* The footer's big "hello." is drawn by CSS, so it stays decoration rather than page text. */
+.fb-hello::before {
+  content: 'hello.';
+}
+
 .fb-hello {
   display: none;
   font-family: var(--serif);
@@ -800,7 +805,8 @@ h2.label {
 }
 
 .statement .w {
-  opacity: 0.32;
+  /* dim until lit, but still 3:1 against the background */
+  opacity: 0.38;
   transition: opacity 0.6s var(--ease), color 0.6s;
 }
 
@@ -1513,19 +1519,23 @@ html:not(.has-js) .beliefs li em {
 .route li {
   position: relative;
   padding-bottom: clamp(44px, 9vh, 90px);
+}
+
+.route li > :is(h3, p) {
   transition: opacity 0.8s var(--ease);
 }
 
-.has-js .route li {
+/* Unlit stops dim their node and title; the place and text stay readable (WCAG contrast). */
+.has-js .route li:not(.on) :is(.node, h3) {
   opacity: 0.38;
+}
+
+.has-js .route li:not(.on) p {
+  opacity: 0.75;
 }
 
 .route li:last-child {
   padding-bottom: 0;
-}
-
-.has-js .route li.on {
-  opacity: 1;
 }
 
 .route .node {
@@ -1537,7 +1547,7 @@ html:not(.has-js) .beliefs li em {
   border-radius: 50%;
   border: 1px solid var(--faint);
   background: var(--bg);
-  transition: background 0.6s, border-color 0.6s, box-shadow 0.6s;
+  transition: background 0.6s, border-color 0.6s, box-shadow 0.6s, opacity 0.8s var(--ease);
 }
 
 .route li.on .node {
@@ -1889,6 +1899,7 @@ html:not(.has-js) .copy {
 }
 
 .prose pre {
+  scroll-margin-top: 96px;
   /* a little wider than the text, so less of the code has to scroll */
   width: min(100vw - 2 * var(--gut), 54rem);
   margin: 1.6em 0 1.8em 50%;
@@ -2286,6 +2297,6 @@ html:not(.has-js) .copy {
   .statement .w { opacity: 1; }
   .has-js .beliefs li { color: var(--ink); }
   .beliefs li em { color: var(--warm); }
-  .has-js .route li { opacity: 1; }
+  .has-js .route li:not(.on) :is(.node, h3, p) { opacity: 1; }
   .card { transform: none !important; }
 }

@@ -14,12 +14,6 @@ const sstep = (a, b, v) => {
   return t * t * (3 - 2 * t);
 };
 
-/* ---------- articles: code that scrolls sideways can be reached by keyboard ---------- */
-for (const pre of $$('.prose pre')) {
-  pre.tabIndex = 0;
-  pre.setAttribute('aria-label', `Code, ${pre.dataset.language || 'snippet'}`);
-}
-
 /* ---------- local time in Nuremberg ---------- */
 const clock = $('#clock');
 if (clock) {
@@ -234,8 +228,8 @@ const canvas = $('#gl');
 if (canvas && film) {
   const start = () =>
     import('./film.js')
-      .then(({ initFilm }) => {
-        const ok = initFilm({
+      .then(({ initFilm }) =>
+        initFilm({
           canvas,
           film,
           about: $('#about'),
@@ -247,11 +241,29 @@ if (canvas && film) {
             root.classList.remove('gl-off');
             root.classList.add('gl-on');
           },
-        });
+        }),
+      )
+      .then((ok) => {
         if (ok) root.classList.add('gl-on');
         else fallBack();
       })
       .catch(fallBack);
-  if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 1200 });
-  else setTimeout(start, 200);
+  const idle = () => ('requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 1200 }) : setTimeout(start, 200));
+  // Ask for the GPU only once the first frame is on screen: a cold GPU process is still drawing it,
+  // and creating the WebGL context would wait behind that work on the main thread.
+  let begun = false;
+  const begin = () => {
+    if (begun) return;
+    begun = true;
+    idle();
+  };
+  if (window.PerformanceObserver?.supportedEntryTypes?.includes('paint')) {
+    new PerformanceObserver((list, po) => {
+      if (list.getEntriesByName('first-contentful-paint').length) {
+        po.disconnect();
+        begin();
+      }
+    }).observe({ type: 'paint', buffered: true });
+    setTimeout(begin, 3000);
+  } else begin();
 }
