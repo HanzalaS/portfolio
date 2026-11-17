@@ -1,0 +1,78 @@
+---
+title: 'Loading, Empty, Error… and "The Model Is Thinking"'
+excerpt: Years of building app states taught me what an AI product owes the person waiting on it.
+date: 2026-11-17
+origin: { name: LinkedIn, url: 'https://www.linkedin.com/pulse/loading-empty-error-model-thinking-hanzala-saeed-xvqrf' }
+---
+
+<p class="lead">Years of building app states taught me what an AI product owes the person waiting on it.</p>
+
+In my Flutter days, the bug I hated most was the blank white screen. An API call failed in a way my isLoading and hasError flags never saw coming, and the user was left looking at nothing.
+
+AI tools have their own version of that screen. It's rarely blank. It looks busy, or it looks finished, and you can't always tell whether to believe it.
+
+## Every state is a claim
+
+Before DeepMask I shipped more than ten Flutter apps. A lot of that work came down to one question: what does the user see right now?
+
+Last year I wrote about [handling API calls with a single enum](https://medium.com/@hanzalasaeed47/clean-and-scalable-api-status-handling-in-flutter-ddf0817c20d3) instead of a pile of booleans: loading, success, error, empty and a few more. It started from that same blank screen.
+
+That screen bothered me because it was wrong. It said there was nothing there, when really something had broken. A spinner that never stops is wrong the other way, still saying "working" long after the work is over.
+
+Every state is a claim the interface makes to the person in front of it, and the enum was my way of keeping those claims true.
+
+Back then a request took a second, and the data arrived or it didn't. Waiting was one state.
+
+## Waiting isn't one state anymore
+
+These days I'm a founding engineer at DeepMask, working across the whole stack on an AI workspace where people chat and generate files like presentations and spreadsheets. Building AI features taught me how much hides behind the word "loading".
+
+In any AI tool, waiting comes in layers. First there's the pause before anything comes back. Then text starts arriving word by word, readable but not finished. Sometimes the assistant goes off to do something bigger, like putting a file together, and what you're waiting on isn't text at all.
+
+One "thinking" animation covers all of it and is honest about none of it. The screen should help you decide whether to keep waiting, and it can only do that if each status lasts exactly as long as it's true. When the product genuinely doesn't know what's happening, saying so is better than looking busy.
+
+So yeah, the old enum grows. If I sketched it today for an AI answer, it might look like this:
+
+```dart
+enum AnswerStatus {
+  waiting,      // sent, nothing back yet
+  working,      // off doing something slower
+  streaming,    // text arriving, not finished
+  interrupted,  // connection dropped, may be incomplete
+  stopped,      // you chose this
+  failed,       // and says why, in plain words
+  done,         // says nothing about correct
+}
+```
+
+It's only a sketch, and "done" hides the most important question. The habit still holds, though. Each value should match something the user can actually tell apart.
+
+## Stopping is a decision about what to keep
+
+If you've used an AI chat, you've probably pressed Stop and then wondered whether it really stopped. The words freeze, but you can't see what's behind them.
+
+To me, Stop should mean the work stops. Freezing the text is only the visible half of that promise.
+
+The harder question is what to keep. You may have already read part of the answer, and it might be the part you needed. Throwing it away pretends you never saw it. Keeping it as if it were complete pretends you never pressed Stop. What you deserve is simpler: the part you read shouldn't vanish, and a stopped answer should never pass for a finished one.
+
+A dropped connection is different, because you didn't choose it, so it shouldn't look like a choice. Half a reply that ends without warning needs an honest note that it may be incomplete. Without one, it reads exactly like a whole answer.
+
+## Success is the state I trust least
+
+In my Flutter apps, success meant the server had responded, and the server was the source of truth. If the data was wrong, that was a backend bug.
+
+In an AI product, success often just means the output stopped coming. An answer can sound confident and still be wrong.
+
+So I want success to claim only what the product actually knows. When something can't be done, the assistant should say so in plain words. A simple "I couldn't do that" is kinder than a confident guess.
+
+Some problems no state can catch at all. I wrote about one in [my article on AI-generated slides](https://www.linkedin.com/pulse/ai-generated-slides-engineering-made-usable-hanzala-saeed-tzzff/): a target can end up presented as a result, and nothing on the screen looks wrong. That's why I see a person's review as part of the workflow. It doesn't mean anything failed.
+
+## It was always a list of things I owed the user
+
+When I wrote that enum, I thought it was about keeping my controllers tidy. Looking back, it was a list of things I owed the person on the other side of the screen.
+
+AI made that list longer. The entry I think about most is the last one: the work is finished, and the result is still worth checking.
+
+Everything in this article is something we hold ourselves to at DeepMask. If you try it at [deepmask.io](https://www.deepmask.io/), tell me which state you think we still get wrong.
+
+And if you're building in this space too, I'd like to know which state gave you the most trouble. Mine is still "done".
